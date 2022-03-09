@@ -1,4 +1,5 @@
 import lib.InjectorContainer;
+import lib.exceptions.InstantiationFailedException;
 import lib.exceptions.NoDefaultConstructorException;
 import lib.exceptions.NonInjectableException;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +19,7 @@ public class ContainerTest {
 
     @Test
     @DisplayName("Test parse static")
-    void parseStatic() throws NoDefaultConstructorException, IllegalAccessException, NonInjectableException {
+    void parseStatic() throws NoDefaultConstructorException, IllegalAccessException, NonInjectableException, InstantiationFailedException {
         injector.parseStatic("src");
 
         // cast manually to Test (for the example)
@@ -35,7 +36,7 @@ public class ContainerTest {
 
     @Test
     @DisplayName("Test injection of a concrete class from abstract declaration")
-    void getInstanceFromAbstract() throws NoDefaultConstructorException, IllegalAccessException, NonInjectableException {
+    void getInstanceFromAbstract() throws NoDefaultConstructorException, IllegalAccessException, NonInjectableException, InstantiationFailedException {
         injector.register(ConcreteFromAbstract.InjectableParent.class, ConcreteFromAbstract.InjectableChild.class);
         injector.parseStatic("ConcreteFromAbstract");
 
@@ -55,4 +56,17 @@ public class ContainerTest {
     void noDefaultConstructorError() {
         assertThrows(NoDefaultConstructorException.class, () -> injector.parseStatic("NoDefaultConstructor"));
     }
+
+    @Test
+    @DisplayName("Inject a class in the constructor")
+    void constructorInjection() throws InstantiationFailedException, NoDefaultConstructorException, NonInjectableException, IllegalAccessException {
+        injector.parseStatic("ConstructorInjection");
+
+        ConstructorInjection.InjectableTest t1 = injector.get(ConstructorInjection.InjectableTest.class);
+        t1.getChild().incrementCounter();
+        t1.getChild().incrementCounter();
+        t1.getChild().incrementCounter();
+        assertEquals(t1.getConsInjection().child.getCounter(), t1.getChild().getCounter());
+    }
+
 }

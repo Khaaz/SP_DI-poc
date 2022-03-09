@@ -14,6 +14,8 @@ public class MainTest {
         Test t = (Test)injector.get(mainClass);
 
         t.getChild().incrementCounter();
+        System.out.println("RUN");
         System.out.println(t.getChild().getCounter());
+        System.out.println(t.one.two.three.value);
     }
 }

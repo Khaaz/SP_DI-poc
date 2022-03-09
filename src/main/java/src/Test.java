@@ -10,6 +10,12 @@ public class Test {
 
     private NonInjectable nonInjectable;
 
+    @Inject
+    public One one;
+
+    @Inject
+    public ConstructorInjection consInject;
+
     public InjectableChild getChild() {
         return child;
     }

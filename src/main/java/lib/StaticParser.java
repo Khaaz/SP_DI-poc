@@ -6,12 +6,17 @@ import java.io.InputStreamReader;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Parse a package to retrieve all classes in it.
+ */
 public class StaticParser {
 
     public static Set<Class<?>> findAllClasses(String packageName) {
         InputStream stream = ClassLoader.getSystemClassLoader()
                 .getResourceAsStream(packageName.replaceAll("[.]", "/"));
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+
         return reader.lines()
                 .filter(line -> line.endsWith(".class"))
                 .map(line -> getClass(line, packageName))
@@ -22,7 +27,7 @@ public class StaticParser {
         try {
             return Class.forName(packageName + "." + className.substring(0, className.lastIndexOf('.')));
         } catch (ClassNotFoundException e) {
-            // handle the exception
+            System.err.println("Class not found.");
         }
         return null;
     }
